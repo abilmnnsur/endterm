@@ -2,16 +2,18 @@ package org.example.endterm.repository;
 
 import org.example.endterm.model.Player;
 import org.example.endterm.utils.util;
+import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+@Repository
 public class PlayerRepository {
+
     public List<Player> getAllPlayers() {
         List<Player> players = new ArrayList<>();
+
         String sql = "SELECT * FROM players";
 
         try (Connection conn = util.getConnection();
@@ -34,7 +36,7 @@ public class PlayerRepository {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch players", e);
         }
 
         return players;
