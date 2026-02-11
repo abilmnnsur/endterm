@@ -1,24 +1,27 @@
 package org.example.endterm.controller;
 
 import org.example.endterm.model.Team;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.example.endterm.repository.TeamRepository;
+import org.example.endterm.service.TeamService;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/teams")
+@RequestMapping("/teams")
 public class TeamController {
 
-    private final TeamRepository teamRepository;
+    private final TeamService teamService;
 
-    public TeamController(TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
+    public TeamController(TeamService teamService) {
+        this.teamService = teamService;
     }
 
     @GetMapping
-    public List<Team> getAllTeams() {
-        return teamRepository.getAllTeams();
+    public List<Team> getTeams() {
+        return teamService.getAllTeams();
+    }
+    @GetMapping("/top")
+    public List<Team> getTopTeams() {
+        return teamService.getTopTeams();
     }
 }

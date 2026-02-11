@@ -1,22 +1,27 @@
 package org.example.endterm.service;
 
 import org.example.endterm.model.Team;
-import org.springframework.stereotype.Service;
 import org.example.endterm.repository.TeamRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class TeamService {
 
-    private final TeamRepository teamRepository;
+    private final TeamRepository repo;
 
-    public TeamService(TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
+    public TeamService(TeamRepository repo) {
+        this.repo = repo;
     }
 
+    public List<Team> getTopTeams() {
+        List<Team> teams = repo.getAllTeams();
+        teams.sort((a, b) -> Double.compare(b.getTeamRating(), a.getTeamRating()));
+        return teams;
+    }
 
     public List<Team> getAllTeams() {
-        return teamRepository.getAllTeams();
+        return repo.getAllTeams();
     }
 }

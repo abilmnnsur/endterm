@@ -3,6 +3,7 @@ package org.example.endterm.repository;
 import org.example.endterm.model.InventoryItem;
 import org.example.endterm.model.InventoryValue;
 import org.example.endterm.utils.util;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class InventoryRepository {
 
     public double getInventoryValueByPlayerId(int playerId) {
@@ -63,17 +65,18 @@ public class InventoryRepository {
 
         return result;
     }
+
     public List<InventoryItem> getInventoryByPlayerId(int playerId) {
         List<InventoryItem> items = new ArrayList<>();
 
         String sql = """
-        SELECT w.weapon_name, s.skin_name, s.rarity,
-               s.market_price, pi.quantity
-        FROM player_inventory pi
-        JOIN skins s ON s.skin_id = pi.skin_id
-        JOIN weapons w ON w.weapon_id = s.weapon_id
-        WHERE pi.player_id = ?
-    """;
+            SELECT w.weapon_name, s.skin_name, s.rarity,
+                   s.market_price, pi.quantity
+            FROM player_inventory pi
+            JOIN skins s ON s.skin_id = pi.skin_id
+            JOIN weapons w ON w.weapon_id = s.weapon_id
+            WHERE pi.player_id = ?
+        """;
 
         try (Connection conn = util.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
