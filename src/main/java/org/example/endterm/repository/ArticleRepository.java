@@ -3,52 +3,44 @@ package org.example.endterm.repository;
 import org.example.endterm.model.Article;
 import org.example.endterm.model.CS2Article;
 import org.example.endterm.model.EsportsArticle;
-import org.example.endterm.utils.util;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class ArticleRepository {
 
-    public List<Article> getAllArticles() {
-        List<Article> articles = new ArrayList<>();
+    private final JdbcTemplate jdbc;
 
+    public ArticleRepository(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
+
+    public List<Article> getAllArticles() {
         String sql = """
-            SELECT article_id, title, content, type, author_name, published_at, source
+            SELECT article_id, title, content, type, author_name, published_at
             FROM articles
+            ORDER BY published_at DESC
         """;
 
-        try (Connection conn = util.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        return jdbc.query(sql, (rs, rowNum) -> {
+            int id = rs.getInt("article_id");
+            String title = rs.getString("title");
+            String content = rs.getString("content");
+            String type = rs.getString("type");
+            String author = rs.getString("author_name");
+            LocalDateTime publishedAt =
+                    rs.getTimestamp("published_at").toLocalDateTime();
 
-            while (rs.next()) {
-                int id = rs.getInt("article_id");
-                String title = rs.getString("title");
-                String content = rs.getString("content");
-                String type = rs.getString("type");
-                String author = rs.getString("author_name");
-                LocalDateTime publishedAt = rs.getTimestamp("published_at").toLocalDateTime();
-                String source = rs.getString("source");
-
-                Article article;
-                if ("CS2".equalsIgnoreCase(type)) {
-                    article = new CS2Article(id, title, content, author, publishedAt, source);
-                } else {
-                    article = new EsportsArticle(id, title, content, author, publishedAt, source);
-                }
-
-                articles.add(article);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to fetch articles", e);
-        }
-
-        return articles;
+            return switch (type) {
+                case "CS2" -> new CS2Article ( id, title, content, author, publishedAt,"Valve / CS2");
+                case "ESPORTS", "MATCH_REPORT" ->
+                        new EsportsArticle(id, title, content, author, publishedAt,"HLTV / Esports Media");
+                default ->
+                        throw new IllegalStateException("Unknown article type: " + type);
+            };
+        });
     }
 }
