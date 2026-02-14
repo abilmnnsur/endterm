@@ -181,6 +181,39 @@ This improves maintainability and debugging.
 - Working with real esports domain logic
 - API testing with Postman
 
+
+
+
+Bonus Task — In-Memory Caching Layer
+
+To improve application performance, a simple in-memory caching mechanism was implemented for frequently accessed data.
+
+The cache is implemented as a Singleton, ensuring that only one cache instance exists throughout the application lifecycle.
+
+Implementation Details
+
+The cache is stored in memory using a thread-safe Map.
+
+The caching logic is implemented in the service layer, preserving layered architecture.
+
+Frequently used service methods (e.g. retrieving lists or analytics data) return cached results on repeated calls instead of querying the database again.
+
+The cache follows SOLID principles:
+
+SRP: Cache logic is isolated in a dedicated class.
+
+DIP: Services do not depend directly on database implementation details.
+
+Cached data can be invalidated when underlying data changes or cleared manually if needed.
+
+Benefits
+
+Reduced number of database queries
+
+Improved response time for frequently requested data
+
+Clean separation of concerns without breaking existing architecture
+
 ---
 
 ## Final note
