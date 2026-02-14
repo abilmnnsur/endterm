@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS2 Esports REST API System - Portfolio Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-card: rgba(15, 23, 42, 0.6);
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+        }
+
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header/Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .hero-content {
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Tech Stack Badges */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .badge {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Section */
+        section {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .arch-layer {
+            text-align: center;
+            position: relative;
+        }
+
+        .arch-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 2rem 3rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            min-width: 200px;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .arch-arrow {
+            font-size: 2rem;
+            color: var(--accent);
+            margin: 0 1rem;
+        }
+
+        /* Design Patterns Grid */
+        .patterns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pattern-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .pattern-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .pattern-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .pattern-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .pattern-desc {
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .pattern-code {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #a5f3fc;
+            overflow-x: auto;
+        }
+
+        /* API Table */
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .api-table th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: white;
+        }
+
+        .api-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .api-table tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .method-get {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .method-post {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .method-put {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .method-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            color: #a5f3fc;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Package Structure */
+        .package-structure {
+            background: var(--bg-card);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            font-family: 'Courier New', monospace;
+            backdrop-filter: blur(10px);
+        }
+
+        .folder {
+            color: var(--warning);
+            margin-left: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .file {
+            color: var(--accent);
+            margin-left: 2rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Principles Grid */
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .principle-card {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .principle-card h4 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ER Diagram */
+        .er-diagram {
+            background: var(--bg-card);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-top: 3rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .entity-box {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin: 1rem;
+            min-width: 150px;
+        }
+
+        .entity-box h4 {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Scroll Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Reflection */
+        .reflection-content {
+            background: var(--bg-card);
+            border-left: 4px solid var(--accent);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .reflection-content h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        /* UML Section */
+        .uml-container {
+            background: var(--bg-card);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            overflow-x: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .uml-class {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            margin: 1rem;
+            display: inline-block;
+            min-width: 250px;
+            vertical-align: top;
+        }
+
+        .uml-class-header {
+            background: var(--primary);
+            padding: 0.8rem;
+            text-align: center;
+            font-weight: 700;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .uml-class-body {
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(59, 130, 246, 0.3);
+            margin-top: 5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .architecture-diagram {
+                flex-direction: column;
+            }
+
+            .arch-arrow {
+                transform: rotate(90deg);
+                margin: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>CS2 Esports REST API System</h1>
+                <p>A professional Spring Boot backend system for managing Counter-Strike 2 esports ecosystem with layered architecture, SOLID principles, and design patterns</p>
+                
+                <div class="tech-stack">
+                    <span class="badge">Spring Boot</span>
+                    <span class="badge">PostgreSQL</span>
+                    <span class="badge">REST API</span>
+                    <span class="badge">JPA/Hibernate</span>
+                    <span class="badge">Maven</span>
+                    <span class="badge">SOLID</span>
+                    <span class="badge">Design Patterns</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture">
+        <div class="container">
+            <h2 class="section-title">System Architecture</h2>
+            <p class="section-subtitle">Clean layered architecture following separation of concerns and SOLID principles</p>
+
+            <div class="architecture-diagram fade-in">
+                <div class="arch-layer">
+                    <div class="arch-box">Controller</div>
+                    <p style="color: var(--text-dim); margin-top: 0.5rem;">HTTP Layer</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-layer">
+                    <div class="arch-box">Service</div>
+                    <p style="color: var(--text-dim); margin-top: 0.5rem;">Business Logic</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-layer">
+                    <div class="arch-box">Repository</div>
+                    <p style="color: var(--text-dim); margin-top: 0.5rem;">Data Access</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-layer">
+                    <div class="arch-box">Database</div>
+                    <p style="color: var(--text-dim); margin-top: 0.5rem;">PostgreSQL</p>
+                </div>
+            </div>
+
+            <div class="principles-grid fade-in">
+                <div class="principle-card">
+                    <h4>Single Responsibility</h4>
+                    <p style="color: var(--text-dim);">Each layer has one clear responsibility. Controllers handle HTTP, Services manage business logic, Repositories access data.</p>
+                </div>
+                <div class="principle-card">
+                    <h4>Open/Closed Principle</h4>
+                    <p style="color: var(--text-dim);">Article inheritance hierarchy allows extension without modification of base classes.</p>
+                </div>
+                <div class="principle-card">
+                    <h4>Dependency Inversion</h4>
+                    <p style="color: var(--text-dim);">Controllers depend on Service interfaces, Services depend on Repository interfaces - not concrete implementations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design Patterns Section -->
+    <section id="patterns">
+        <div class="container">
+            <h2 class="section-title">Design Patterns</h2>
+            <p class="section-subtitle">Industry-standard patterns for maintainable and scalable code</p>
+
+            <div class="patterns-grid fade-in">
+                <div class="pattern-card">
+                    <div class="pattern-icon">🏭</div>
+                    <h3 class="pattern-title">Factory Pattern</h3>
+                    <p class="pattern-desc">Creates different article types based on content type</p>
+                    <div class="pattern-code">Article createArticle(String type) {
+    switch(type) {
+        case "CS2": 
+            return new CS2Article();
+        case "ESPORTS": 
+            return new EsportsArticle();
+        case "MATCH": 
+            return new MatchArticle();
+    }
+}</div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-icon">🔨</div>
+                    <h3 class="pattern-title">Builder Pattern</h3>
+                    <p class="pattern-desc">Constructs complex objects step by step</p>
+                    <div class="pattern-code">Player player = Player.builder()
+    .username("s1mple")
+    .realName("Alexander Kostyliev")
+    .country("Ukraine")
+    .team(naviTeam)
+    .role("AWPer")
+    .build();</div>
+                </div>
+
+                <div class="pattern-card">
+                    <div class="pattern-icon">🎯</div>
+                    <h3 class="pattern-title">Singleton Pattern</h3>
+                    <p class="pattern-desc">Service layer beans managed by Spring IoC container</p>
+                    <div class="pattern-code">@Service
+public class ArticleService {
+    // Spring ensures single instance
+    @Autowired
+    private ArticleRepository repo;
+    
+    // Business logic methods
+}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REST API Section -->
+    <section id="rest-api">
+        <div class="container">
+            <h2 class="section-title">REST API Endpoints</h2>
+            <p class="section-subtitle">Complete CRUD operations for all entities</p>
+
+            <div class="fade-in">
+                <table class="api-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td>/api/articles</td>
+                            <td>Get all articles</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td>/api/articles/{id}</td>
+                            <td>Get article by ID</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-post">POST</span></td>
+                            <td>/api/articles</td>
+                            <td>Create new article</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-put">PUT</span></td>
+                            <td>/api/articles/{id}</td>
+                            <td>Update article</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-delete">DELETE</span></td>
+                            <td>/api/articles/{id}</td>
+                            <td>Delete article</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td>/api/players</td>
+                            <td>Get all players</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-post">POST</span></td>
+                            <td>/api/players</td>
+                            <td>Create new player</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td>/api/teams</td>
+                            <td>Get all teams</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-post">POST</span></td>
+                            <td>/api/teams</td>
+                            <td>Create new team</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-delete">DELETE</span></td>
+                            <td>/api/inventory/{id}</td>
+                            <td>Delete inventory item</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-block">
+                    <h4 style="color: var(--success); margin-bottom: 1rem;">Example Request (POST /api/articles)</h4>
+                    <pre>{
+  "title": "s1mple Returns to Competitive CS2",
+  "content": "Legendary AWPer announces comeback...",
+  "type": "CS2",
+  "author": "admin",
+  "tags": ["cs2", "news", "s1mple"],
+  "featured": true
+}</pre>
+                </div>
+
+                <div class="code-block">
+                    <h4 style="color: var(--success); margin-bottom: 1rem;">Example Response (200 OK)</h4>
+                    <pre>{
+  "id": 1,
+  "title": "s1mple Returns to Competitive CS2",
+  "content": "Legendary AWPer announces comeback...",
+  "type": "CS2Article",
+  "author": "admin",
+  "createdAt": "2024-02-11T10:30:00",
+  "tags": ["cs2", "news", "s1mple"],
+  "featured": true,
+  "viewCount": 0
+}</pre>
+                </div>
+
+                <div class="code-block">
+                    <h4 style="color: #ef4444; margin-bottom: 1rem;">Example Error Response (404 Not Found)</h4>
+                    <pre>{
+  "timestamp": "2024-02-11T10:30:00",
+  "status": 404,
+  "error": "Not Found",
+  "message": "Article with id 999 not found",
+  "path": "/api/articles/999"
+}</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Database Section -->
+    <section id="database">
+        <div class="container">
+            <h2 class="section-title">Database Schema</h2>
+            <p class="section-subtitle">Normalized PostgreSQL database with proper relationships</p>
+
+            <div class="er-diagram fade-in">
+                <div class="entity-box">
+                    <h4>Article</h4>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">id, title, content, type<br>author, createdAt</p>
+                </div>
+
+                <div class="entity-box">
+                    <h4>Player</h4>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">id, username, realName<br>country, role, team_id</p>
+                </div>
+
+                <div class="entity-box">
+                    <h4>Team</h4>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">id, name, region<br>founded, logo</p>
+                </div>
+
+                <div class="entity-box">
+                    <h4>Inventory</h4>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">id, player_id, itemName<br>rarity, value</p>
+                </div>
+
+                <div class="entity-box">
+                    <h4>MapStats</h4>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">id, player_id, mapName<br>kills, deaths, wins</p>
+                </div>
+
+                <div class="entity-box">
+                    <h4>Tag</h4>
+                    <p style="color: var(--text-dim); font-size: 0.85rem;">id, name, article_id</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 3rem; text-align: center; color: var(--text-dim);">
+                <p><strong>Relationships:</strong></p>
+                <p>Team (1) → (N) Player | Player (1) → (N) Inventory | Player (1) → (N) MapStats | Article (N) → (M) Tag</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Package Structure Section -->
+    <section id="package-structure">
+        <div class="container">
+            <h2 class="section-title">Package Structure</h2>
+            <p class="section-subtitle">Clean organization following component principles</p>
+
+            <div class="fade-in">
+                <div class="package-structure">
+                    <div style="color: var(--primary); font-weight: 700; font-size: 1.1rem;">src/main/java/com/cs2esports/</div>
+                    <div class="folder">📁 controller/</div>
+                    <div class="file">ArticleController.java</div>
+                    <div class="file">PlayerController.java</div>
+                    <div class="file">TeamController.java</div>
+                    <div class="file">InventoryController.java</div>
+                    
+                    <div class="folder">📁 service/</div>
+                    <div class="file">ArticleService.java</div>
+                    <div class="file">PlayerService.java</div>
+                    <div class="file">TeamService.java</div>
+                    <div class="file">InventoryService.java</div>
+                    
+                    <div class="folder">📁 repository/</div>
+                    <div class="file">ArticleRepository.java</div>
+                    <div class="file">PlayerRepository.java</div>
+                    <div class="file">TeamRepository.java</div>
+                    <div class="file">InventoryRepository.java</div>
+                    
+                    <div class="folder">📁 model/</div>
+                    <div class="file">Article.java</div>
+                    <div class="file">CS2Article.java</div>
+                    <div class="file">EsportsArticle.java</div>
+                    <div class="file">MatchArticle.java</div>
+                    <div class="file">Player.java</div>
+                    <div class="file">Team.java</div>
+                    <div class="file">Inventory.java</div>
+                    <div class="file">MapStats.java</div>
+                    <div class="file">Tag.java</div>
+                    
+                    <div class="folder">📁 exception/</div>
+                    <div class="file">ResourceNotFoundException.java</div>
+                    <div class="file">GlobalExceptionHandler.java</div>
+                    
+                    <div class="folder">📁 core/</div>
+                    <div class="file">ApplicationConfig.java</div>
+                    
+                    <div class="folder">📁 utils/</div>
+                    <div class="file">DateUtils.java</div>
+                    <div class="file">ValidationUtils.java</div>
+                </div>
+
+                <div class="principles-grid" style="margin-top: 3rem;">
+                    <div class="principle-card">
+                        <h4>REP - Reuse/Release Equivalence</h4>
+                        <p style="color: var(--text-dim);">Each package can be released and versioned independently (controller, service, repository)</p>
+                    </div>
+                    <div class="principle-card">
+                        <h4>CCP - Common Closure Principle</h4>
+                        <p style="color: var(--text-dim);">Classes that change together are packaged together (all article-related logic in same package)</p>
+                    </div>
+                    <div class="principle-card">
+                        <h4>CRP - Common Reuse Principle</h4>
+                        <p style="color: var(--text-dim);">Classes in a package are reused together (repository layer always used with service layer)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- UML Section -->
+    <section id="uml">
+        <div class="container">
+            <h2 class="section-title">UML Class Diagram</h2>
+            <p class="section-subtitle">Object-oriented design structure</p>
+
+            <div class="uml-container fade-in">
+                <div class="uml-class">
+                    <div class="uml-class-header">Article (Abstract)</div>
+                    <div class="uml-class-body">
+                        - id: Long<br>
+                        - title: String<br>
+                        - content: String<br>
+                        - author: String<br>
+                        - createdAt: LocalDateTime<br>
+                        - tags: List&lt;Tag&gt;<br>
+                        <hr style="margin: 0.5rem 0; border-color: rgba(255,255,255,0.1);">
+                        + abstract getType(): String
+                    </div>
+                </div>
+
+                <div class="uml-class">
+                    <div class="uml-class-header">CS2Article</div>
+                    <div class="uml-class-body">
+                        - weaponType: String<br>
+                        - mapName: String<br>
+                        <hr style="margin: 0.5rem 0; border-color: rgba(255,255,255,0.1);">
+                        + getType(): String
+                    </div>
+                </div>
+
+                <div class="uml-class">
+                    <div class="uml-class-header">EsportsArticle</div>
+                    <div class="uml-class-body">
+                        - tournament: String<br>
+                        - prizePool: Double<br>
+                        <hr style="margin: 0.5rem 0; border-color: rgba(255,255,255,0.1);">
+                        + getType(): String
+                    </div>
+                </div>
+
+                <div class="uml-class">
+                    <div class="uml-class-header">Player</div>
+                    <div class="uml-class-body">
+                        - id: Long<br>
+                        - username: String<br>
+                        - realName: String<br>
+                        - country: String<br>
+                        - role: String<br>
+                        - team: Team<br>
+                        - inventory: List&lt;Inventory&gt;<br>
+                        - mapStats: List&lt;MapStats&gt;
+                    </div>
+                </div>
+
+                <div class="uml-class">
+                    <div class="uml-class-header">Team</div>
+                    <div class="uml-class-body">
+                        - id: Long<br>
+                        - name: String<br>
+                        - region: String<br>
+                        - founded: LocalDate<br>
+                        - players: List&lt;Player&gt;
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Postman Demo Section -->
+    <section id="postman">
+        <div class="container">
+            <h2 class="section-title">API Testing Demonstration</h2>
+            <p class="section-subtitle">Postman collection for comprehensive endpoint testing</p>
+
+            <div class="glass-card fade-in">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Test Scenarios</h3>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--accent);">1. Create a New Team</h4>
+                    <div class="code-block">
+                        <pre>POST http://localhost:8080/api/teams
+Content-Type: application/json
+
+{
+  "name": "Natus Vincere",
+  "region": "CIS",
+  "founded": "2009-12-17"
+}</pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--accent);">2. Create a Player</h4>
+                    <div class="code-block">
+                        <pre>POST http://localhost:8080/api/players
+Content-Type: application/json
+
+{
+  "username": "s1mple",
+  "realName": "Alexander Kostyliev",
+  "country": "Ukraine",
+  "role": "AWPer",
+  "teamId": 1
+}</pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--accent);">3. Create an Article</h4>
+                    <div class="code-block">
+                        <pre>POST http://localhost:8080/api/articles
+Content-Type: application/json
+
+{
+  "title": "Major Championship 2024 Results",
+  "content": "Analysis of the tournament...",
+  "type": "MATCH",
+  "author": "editor",
+  "tags": ["major", "championship", "2024"]
+}</pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="color: var(--accent);">4. Retrieve All Entities</h4>
+                    <div class="code-block">
+                        <pre>GET http://localhost:8080/api/teams
+GET http://localhost:8080/api/players
+GET http://localhost:8080/api/articles
+GET http://localhost:8080/api/inventory</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reflection Section -->
+    <section id="reflection">
+        <div class="container">
+            <h2 class="section-title">Project Reflection</h2>
+            <p class="section-subtitle">Technical achievements and learning outcomes</p>
+
+            <div class="reflection-content fade-in">
+                <h4>Technical Achievements</h4>
+                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">
+                    This project demonstrates proficiency in enterprise-grade Spring Boot development with a focus on clean architecture and maintainability. The implementation follows industry best practices including SOLID principles, proven design patterns, and RESTful API design.
+                </p>
+
+                <h4>Design Pattern Implementation</h4>
+                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">
+                    The Factory pattern enables flexible article creation without tight coupling. The Builder pattern simplifies complex object construction. Singleton pattern through Spring's IoC container ensures efficient resource management.
+                </p>
+
+                <h4>Architectural Benefits</h4>
+                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">
+                    The layered architecture provides clear separation of concerns: Controllers handle HTTP requests, Services manage business logic, and Repositories abstract data access. This makes the system highly testable and maintainable.
+                </p>
+
+                <h4>Database Design</h4>
+                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">
+                    The normalized schema eliminates redundancy while maintaining referential integrity through proper foreign key relationships. JPA/Hibernate handles the object-relational mapping efficiently.
+                </p>
+
+                <h4>Learning Outcomes</h4>
+                <p style="color: var(--text-dim);">
+                    • Deep understanding of Spring Boot ecosystem and dependency injection<br>
+                    • Practical application of SOLID principles in real-world scenarios<br>
+                    • RESTful API design following industry standards<br>
+                    • Database modeling and normalization techniques<br>
+                    • Component principles (REP, CCP, CRP) for package organization
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="color: var(--text-dim);">CS2 Esports Management System | Spring Boot REST API</p>
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 0.5rem;">Built with Clean Architecture, SOLID Principles & Design Patterns</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
