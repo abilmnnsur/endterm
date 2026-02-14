@@ -1,5 +1,6 @@
 package org.example.endterm.service;
 
+import org.example.endterm.cache.InMemoryCache;
 import org.example.endterm.exception.InvalidInputException;
 import org.example.endterm.model.InventoryItem;
 import org.example.endterm.model.InventoryValue;
@@ -12,6 +13,10 @@ import java.util.List;
 public class InventoryService {
 
     private final InventoryRepository repo;
+    private final InMemoryCache cache = InMemoryCache.getInstance();
+
+    private static final String TOP_INVENTORIES_CACHE_KEY = "top_inventories";
+
     public InventoryService(InventoryRepository repo) {
         this.repo = repo;
     }
@@ -23,11 +28,15 @@ public class InventoryService {
         return repo.getInventoryValueByPlayerId(playerId);
     }
 
-
     public List<InventoryValue> getTopInventories() {
-        return repo.getTopInventories();
-    }
+        if (cache.contains(TOP_INVENTORIES_CACHE_KEY)) {
+            return (List<InventoryValue>) cache.get(TOP_INVENTORIES_CACHE_KEY);
+        }
 
+        List<InventoryValue> topInventories = repo.getTopInventories();
+        cache.put(TOP_INVENTORIES_CACHE_KEY, topInventories);
+        return topInventories;
+    }
 
     public List<InventoryItem> getPlayerInventory(int playerId) {
         if (playerId <= 0) {

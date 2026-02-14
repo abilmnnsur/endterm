@@ -1,5 +1,6 @@
 package org.example.endterm.service;
 
+import org.example.endterm.cache.InMemoryCache;
 import org.example.endterm.utils.util;
 
 import java.sql.Connection;
@@ -10,7 +11,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TrendService {
+
+    private final InMemoryCache cache = InMemoryCache.getInstance();
+    private static final String TRENDING_TAGS_CACHE_KEY = "trending_tags";
+
     public Map<String, Integer> getTrendingTags() {
+
+        if (cache.contains(TRENDING_TAGS_CACHE_KEY)) {
+            return (Map<String, Integer>) cache.get(TRENDING_TAGS_CACHE_KEY);
+        }
+
         Map<String, Integer> trends = new LinkedHashMap<>();
 
         String sql = """
@@ -33,6 +43,7 @@ public class TrendService {
             e.printStackTrace();
         }
 
+        cache.put(TRENDING_TAGS_CACHE_KEY, trends);
         return trends;
     }
 }

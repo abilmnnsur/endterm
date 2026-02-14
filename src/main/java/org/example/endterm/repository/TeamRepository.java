@@ -37,6 +37,7 @@ public class TeamRepository {
             throw new RuntimeException("Failed to fetch teams from database", e);
         }
 
+
         return teams;
     }
 }
